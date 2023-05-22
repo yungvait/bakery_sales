@@ -14,7 +14,7 @@ with open('style.css') as f:
 
 def run_app():
     # Загрузка данных с указанием кодировки
-    data = pd.read_csv('C:/Users/User/Desktop/ВКР/Bakery_sales.csv', delimiter=';', encoding='Windows-1251')
+    data = pd.read_csv('Bakery_sales.csv', delimiter=';', encoding='Windows-1251')
 
     # Преобразование столбца 'date' в тип datetime
     data['date'] = pd.to_datetime(data['date'], format='%d.%m.%Y')
