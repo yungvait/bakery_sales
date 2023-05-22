@@ -114,25 +114,25 @@ def run_app():
         # Выбор типа графика с помощью селектбокса
         chart_type = st.selectbox('Выберите тип графика', ['Гистограмма', 'Круговая диаграмма'])
 
-        if chart_type == 'Гистограмма':
-            # Создание графика выручки по месяцам
-            fig = go.Figure(data=[go.Bar(x=revenue_by_month11['date'], y=revenue_by_month11['total_price'])])
-            fig.update_layout(
-                title=f'Выручка по месяцам ({selected_year11})',
-                xaxis_title='Месяц',
-                yaxis_title='Выручка'
-            )
-            fig.update_layout()
-            st.plotly_chart(fig)
+    if chart_type == 'Гистограмма':
+        # Создание графика выручки по месяцам
+        fig = go.Figure(data=[go.Bar(x=revenue_by_month11['date'], y=revenue_by_month11['total_price'])])
+        fig.update_layout(
+            title=f'Выручка по месяцам ({selected_year11})',
+            xaxis_title='Месяц',
+            yaxis_title='Выручка'
+        )
+        fig.update_layout()
+        st.plotly_chart(fig)
 
-        elif chart_type == 'Круговая диаграмма':
-            # Создание круговой диаграммы выручки по месяцам
-            fig = go.Figure(data=[go.Pie(labels=revenue_by_month11['date'], values=revenue_by_month11['total_price'])])
-            fig.update_layout(
-                title=f'Круговая диаграмма выручки по месяцам ({selected_year11})'
-            )
-            fig.update_layout()
-            st.plotly_chart(fig)
+    elif chart_type == 'Круговая диаграмма':
+        # Создание круговой диаграммы выручки по месяцам
+        fig = go.Figure(data=[go.Pie(labels=revenue_by_month11['date'], values=revenue_by_month11['total_price'])])
+        fig.update_layout(
+            title=f'Круговая диаграмма выручки по месяцам ({selected_year11})'
+        )
+        fig.update_layout()
+        st.plotly_chart(fig)
 
 
     
