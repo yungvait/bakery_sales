@@ -8,9 +8,7 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 import calendar
 
-
-
-with open('C:/Users/User/Desktop/ВКР/My_VKR/style.css') as f:
+with open('C:\\Users\\User\\Desktop\\ВКР\\bakery_sales\\style.css') as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 
@@ -69,11 +67,8 @@ def run_app():
     with st.expander("Посмотреть все отфильтрованные строки"):
         st.dataframe(filtered_data)
     with st.expander('Сводная таблица "Сумма продаж по артикулу"'):
-        # Построение сводной таблицы
-        pivot_table = filtered_data.pivot_table(values='total_price', index='date', columns='article', aggfunc='sum', fill_value=0)
-
-        # Отображение сводной таблицы в Streamlit
-        st.write(pivot_table)
+       
+        st.write("pivot_table")
 
         
 
