@@ -59,37 +59,41 @@ def run_app():
     # Удаление даты из столбца 'time'
     filtered_data['time'] = filtered_data['time'].dt.time
 
-    # Показать только первые 10 строк отфильтрованных данных
-    with st.expander("Посмотреть первые 10 строк"):
-        st.subheader('Отфильтрованные данные')
-        st.dataframe(filtered_data.head(10))
-    # Отобразить остальные строки с прокруткой
-    with st.expander("Посмотреть все отфильтрованные строки"):
-        st.dataframe(filtered_data)
-    with st.expander('Сводная таблица "Сумма продаж по артикулу"'):
-       
-        st.write("pivot_table")
-
+    with st.container():
+        st.markdown('---')
+        st.title('Анализ данных')
+        st.markdown('---')
+        # Показать только первые 10 строк отфильтрованных данных
+        with st.expander("Посмотреть первые 10 строк", use_container_width=True):
+            st.subheader('Отфильтрованные данные')
+            st.dataframe(filtered_data.head(10), use_container_width=True)
+        # Отобразить остальные строки с прокруткой
+        with st.expander("Посмотреть все отфильтрованные строки", use_container_width=True):
+            st.dataframe(filtered_data, use_container_width=True)
+        with st.expander('Сводная таблица "Сумма продаж по артикулу"', use_container_width=True):
         
+            st.write("pivot_table", use_container_width=True)
 
-    # Топ-10 продаж за выбранный период
-    top_sales = filtered_data.groupby('article')['Quantity'].sum().nlargest(10).reset_index()
+            
 
-    # Преобразование столбца 'total_price' в числовой тип данных
-    filtered_data['total_price'] = filtered_data['total_price'].str.replace(',', '.').astype(float)
+        # Топ-10 продаж за выбранный период
+        top_sales = filtered_data.groupby('article')['Quantity'].sum().nlargest(10).reset_index()
 
-    # Топ-10 продуктов по сумме продаж за выбранный период
-    top_products = filtered_data.groupby('article')['total_price'].sum().nlargest(10).reset_index()
+        # Преобразование столбца 'total_price' в числовой тип данных
+        filtered_data['total_price'] = filtered_data['total_price'].str.replace(',', '.').astype(float)
 
-
-
-
-
+        # Топ-10 продуктов по сумме продаж за выбранный период
+        top_products = filtered_data.groupby('article')['total_price'].sum().nlargest(10).reset_index()
 
 
-    # Показать только первые 10 строк топ-10 продаж
-    st.write("10 самых часто продаваемых продуктов")
-    st.dataframe(top_sales)
+
+
+
+
+
+        # Показать только первые 10 строк топ-10 продаж
+        st.write("10 самых часто продаваемых продуктов", use_container_width=True)
+        st.dataframe(top_sales, use_container_width=True)
 
 
 
@@ -456,8 +460,6 @@ def run_app():
 
 if __name__ == '__main__':
     # Запуск приложения
-    st.markdown('---')
-    st.title('Анализ данных')
-    st.markdown('---')
+
     st.sidebar.title('Настройки')
     run_app()
