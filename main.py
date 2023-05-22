@@ -96,6 +96,40 @@ def run_app():
         st.dataframe(top_sales, use_container_width=True)
 
 
+        # Данные для графика "10 самых часто продаваемых продуктов"
+        top_sales_data = top_sales.set_index('article')['Quantity']
+
+        # Создание графика
+        fig1 = go.Figure(data=[go.Pie(labels=top_sales_data.index, values=top_sales_data)])
+
+        # Настройка макета и заголовка
+        fig1.update_layout(title='10 самых часто продаваемых продуктов')
+
+        # Отображение графика в Streamlit
+        st.plotly_chart(fig1, use_container_width=True)
+
+        
+        # Показать только первые 10 строк 10 самых часто продаваемых продуктов
+        st.write("Топ-10 продуктов по сумме продаж")
+        st.dataframe(top_products, use_container_width=True)
+
+
+
+
+
+        # Данные для графика "Топ-10 продуктов по сумме продаж"
+        top_products_data = top_products.set_index('article')['total_price']
+
+        # Создание круговой диаграммы
+        fig2 = go.Figure(data=[go.Pie(labels=top_products_data.index, values=top_products_data)])
+
+        # Настройка макета и заголовка
+        fig2.update_layout(title='Топ-10 продуктов по сумме продаж')
+
+        # Отображение графика в Streamlit
+        st.plotly_chart(fig2, use_container_width=True)
+
+
 
     colgr1, colgr2 = st.columns(2)
     # Конвертация столбца 'total_price' в числовой тип данных
@@ -141,25 +175,13 @@ def run_app():
 
 
     
-    # Показать только первые 10 строк 10 самых часто продаваемых продуктов
-    st.write("Топ-10 продуктов по сумме продаж")
-    st.dataframe(top_products, use_container_width=True)
+
 
 
 
 
    
-    # Данные для графика "10 самых часто продаваемых продуктов"
-    top_sales_data = top_sales.set_index('article')['Quantity']
 
-    # Создание графика
-    fig1 = go.Figure(data=[go.Pie(labels=top_sales_data.index, values=top_sales_data)])
-
-    # Настройка макета и заголовка
-    fig1.update_layout(title='10 самых часто продаваемых продуктов')
-
-    # Отображение графика в Streamlit
-    st.plotly_chart(fig1, use_container_width=True)
 
 
     if same_date:
@@ -232,17 +254,7 @@ def run_app():
         
   
 
-    # Данные для графика "Топ-10 продуктов по сумме продаж"
-    top_products_data = top_products.set_index('article')['total_price']
-
-    # Создание круговой диаграммы
-    fig2 = go.Figure(data=[go.Pie(labels=top_products_data.index, values=top_products_data)])
-
-    # Настройка макета и заголовка
-    fig2.update_layout(title='Топ-10 продуктов по сумме продаж')
-
-    # Отображение графика в Streamlit
-    st.plotly_chart(fig2, use_container_width=True)
+   
 
 
 
@@ -420,30 +432,7 @@ def run_app():
 
                 st.plotly_chart(fig_sales_by_product, use_container_width=True)
    
-    # Данные для графика "10 самых часто продаваемых продуктов"
-    top_sales_data = top_sales.set_index('article')['Quantity']
-
-    # Создание графика
-    fig1 = go.Figure(data=[go.Pie(labels=top_sales_data.index, values=top_sales_data)])
-
-    # Настройка макета и заголовка
-    fig1.update_layout(title='10 самых часто продаваемых продуктов')
-
-    # Отображение графика в Streamlit
-    st.plotly_chart(fig1, use_container_width=True)
-    
    
-    # Данные для графика "10 самых часто продаваемых продуктов"
-    top_sales_data = top_sales.set_index('article')['Quantity']
-
-    # Создание графика
-    fig1 = go.Figure(data=[go.Pie(labels=top_sales_data.index, values=top_sales_data)])
-
-    # Настройка макета и заголовка
-    fig1.update_layout(title='10 самых часто продаваемых продуктов')
-
-    # Отображение графика в Streamlit
-    st.plotly_chart(fig1, use_container_width=True)
 
 
 
