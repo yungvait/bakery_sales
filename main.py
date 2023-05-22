@@ -143,7 +143,7 @@ def run_app():
     
     # Показать только первые 10 строк 10 самых часто продаваемых продуктов
     st.write("Топ-10 продуктов по сумме продаж")
-    st.dataframe(top_products)
+    st.dataframe(top_products, use_container_width=True)
 
 
 
@@ -159,7 +159,7 @@ def run_app():
     fig1.update_layout(title='10 самых часто продаваемых продуктов')
 
     # Отображение графика в Streamlit
-    st.plotly_chart(fig1)
+    st.plotly_chart(fig1, use_container_width=True)
 
 
     if same_date:
@@ -190,7 +190,7 @@ def run_app():
                 yaxis_title='Количество продаж',
                 xaxis_tickformat='%H:%M'
             )
-            st.plotly_chart(fig_hourly)
+            st.plotly_chart(fig_hourly, use_container_width=True)
         else:
             st.write('Нет данных для выбранного дня.')
     else:
@@ -211,7 +211,7 @@ def run_app():
             xaxis_title='Дата',
             yaxis_title='Количество продаж'
         )
-        st.plotly_chart(fig)
+        st.plotly_chart(fig, use_container_width=True)
 
 
 
@@ -242,7 +242,7 @@ def run_app():
     fig2.update_layout(title='Топ-10 продуктов по сумме продаж')
 
     # Отображение графика в Streamlit
-    st.plotly_chart(fig2)
+    st.plotly_chart(fig2, use_container_width=True)
 
 
 
@@ -278,7 +278,7 @@ def run_app():
                     yaxis_title='Сумма продаж',
                     xaxis_tickformat='%H:%M'
                 )
-                st.plotly_chart(fig_hourly_sales)
+                st.plotly_chart(fig_hourly_sales, use_container_width=True)
             else:
                 st.write('Нет данных для выбранного дня.')
         else:
@@ -310,7 +310,7 @@ def run_app():
                     xaxis_title='Дата',
                     yaxis_title='Сумма продаж'
                 )
-                st.plotly_chart(fig_sales)
+                st.plotly_chart(fig_sales, use_container_width=True)
             else:
                 st.write('Нет данных для отображения динамики продаж по сумме.')
         else:
@@ -356,93 +356,94 @@ def run_app():
     min_date_chart = data['date'].min().date()
     max_date_chart = data['date'].max().date()
 
-    col6, col7, col8 = st.columns(3)
+    
 
-    with col6:
-        with st.container():
-            col3, col4 = st.columns(2)
-            with col3:
-                # Фильтр даты
-                start_date_chart = st.date_input('Выберите начальную дату', min_value=min_date_chart, max_value=max_date_chart, key='start_date', value=min_date_chart)
-            with col4:
-                end_date_chart = st.date_input('Выберите конечную дату', min_value=min_date_chart, max_value=max_date_chart, key='end_date', value=max_date_chart)
+   
+    with st.container():
+        col3, col4 = st.columns(2)
+        with col3:
+            # Фильтр даты
+            start_date_chart = st.date_input('Выберите начальную дату', min_value=min_date_chart, max_value=max_date_chart, key='start_date', value=min_date_chart)
+        with col4:
+            end_date_chart = st.date_input('Выберите конечную дату', min_value=min_date_chart, max_value=max_date_chart, key='end_date', value=max_date_chart)
 
 
 
-            # Фильтрация данных только по дате
-            filtered_data_chart = data[(data['date'] >= pd.to_datetime(start_date_chart)) & (data['date'] <= pd.to_datetime(end_date_chart))]
+        # Фильтрация данных только по дате
+        filtered_data_chart = data[(data['date'] >= pd.to_datetime(start_date_chart)) & (data['date'] <= pd.to_datetime(end_date_chart))]
 
-            # Удаление времени из столбца 'date'
-            filtered_data_chart['date'] = filtered_data_chart['date'].dt.date
+        # Удаление времени из столбца 'date'
+        filtered_data_chart['date'] = filtered_data_chart['date'].dt.date
 
-            # Удаление даты из столбца 'time'
-            filtered_data_chart['time'] = filtered_data_chart['time'].dt.time
+        # Удаление даты из столбца 'time'
+        filtered_data_chart['time'] = filtered_data_chart['time'].dt.time
 
         
-            # Фильтр продуктов
-            selected_products_chart = st.multiselect('Выберите продукты', filtered_data_chart['article'].unique())
+        # Фильтр продуктов
+        selected_products_chart = st.multiselect('Выберите продукты', filtered_data_chart['article'].unique())
 
-            if selected_products_chart and start_date_chart and end_date_chart:
-                # Фильтрация данных по выбранным продуктам и дате
-                filtered_data_selected_products = filtered_data_chart[
-                    (filtered_data_chart['article'].isin(selected_products_chart)) &
-                    (filtered_data_chart['date'] >= start_date_chart) & (filtered_data_chart['date'] <= end_date_chart)
-                ]
+        if selected_products_chart and start_date_chart and end_date_chart:
+            # Фильтрация данных по выбранным продуктам и дате
+            filtered_data_selected_products = filtered_data_chart[
+                (filtered_data_chart['article'].isin(selected_products_chart)) &
+                (filtered_data_chart['date'] >= start_date_chart) & (filtered_data_chart['date'] <= end_date_chart)
+            ]
 
-                if not filtered_data_selected_products.empty:
-                    # Группировка данных по продукту, дате и суммирование продаж
-                    sales_by_product_date = filtered_data_selected_products.groupby(['article', 'date'])['Quantity'].sum().reset_index()
+            if not filtered_data_selected_products.empty:
+                # Группировка данных по продукту, дате и суммирование продаж
+                sales_by_product_date = filtered_data_selected_products.groupby(['article', 'date'])['Quantity'].sum().reset_index()
 
-                    # Создание графика динамики продаж по каждому продукту
-                    fig_sales_by_product = go.Figure()
+                # Создание графика динамики продаж по каждому продукту
+                fig_sales_by_product = go.Figure()
 
-                    for product in selected_products_chart:
-                        data_product = sales_by_product_date[sales_by_product_date['article'] == product]
-                        fig_sales_by_product.add_trace(go.Scatter(
-                            x=data_product['date'],
-                            y=data_product['Quantity'],
-                            mode='lines',
-                            name=product,
-                            hovertext=[f'{date.strftime("%A (%d.%m.%Y)")}: {quantity}' for date, quantity in
-                                    zip(data_product['date'], data_product['Quantity'])],
-                            hovertemplate='<b>%{hovertext}</b><br>Продажи: %{y}'
-                        ))
+                for product in selected_products_chart:
+                    data_product = sales_by_product_date[sales_by_product_date['article'] == product]
+                    fig_sales_by_product.add_trace(go.Scatter(
+                        x=data_product['date'],
+                        y=data_product['Quantity'],
+                        mode='lines',
+                        name=product,
+                        hovertext=[f'{date.strftime("%A (%d.%m.%Y)")}: {quantity}' for date, quantity in
+                                zip(data_product['date'], data_product['Quantity'])],
+                        hovertemplate='<b>%{hovertext}</b><br>Продажи: %{y}'
+                    ))
 
-                    fig_sales_by_product.update_layout(
-                        title='Динамика продаж по продуктам',
-                        xaxis_title='Дата',
-                        yaxis_title='Количество продаж'
-                    )
+                fig_sales_by_product.update_layout(
+                    title='Динамика продаж по продуктам',
+                    xaxis_title='Дата',
+                    yaxis_title='Количество продаж',
+                    legend=dict(orientation='h', yanchor='top', xanchor='left', x=0, y=1.2)
+                )
 
-                    # Установка размера графика
-                    fig_sales_by_product.update_layout(height=400, width=600)  #height=600, width=1000
+                # Установка размера графика
+                fig_sales_by_product.update_layout(height=400, width=600)  #height=600, width=1000
 
-                    st.plotly_chart(fig_sales_by_product)
-    with col7:
-        # Данные для графика "10 самых часто продаваемых продуктов"
-        top_sales_data = top_sales.set_index('article')['Quantity']
+                st.plotly_chart(fig_sales_by_product, use_container_width=True)
+   
+    # Данные для графика "10 самых часто продаваемых продуктов"
+    top_sales_data = top_sales.set_index('article')['Quantity']
 
-        # Создание графика
-        fig1 = go.Figure(data=[go.Pie(labels=top_sales_data.index, values=top_sales_data)])
+    # Создание графика
+    fig1 = go.Figure(data=[go.Pie(labels=top_sales_data.index, values=top_sales_data)])
 
-        # Настройка макета и заголовка
-        fig1.update_layout(title='10 самых часто продаваемых продуктов')
+    # Настройка макета и заголовка
+    fig1.update_layout(title='10 самых часто продаваемых продуктов')
 
-        # Отображение графика в Streamlit
-        st.plotly_chart(fig1)
+    # Отображение графика в Streamlit
+    st.plotly_chart(fig1, use_container_width=True)
     
-    with col8:
-        # Данные для графика "10 самых часто продаваемых продуктов"
-        top_sales_data = top_sales.set_index('article')['Quantity']
+   
+    # Данные для графика "10 самых часто продаваемых продуктов"
+    top_sales_data = top_sales.set_index('article')['Quantity']
 
-        # Создание графика
-        fig1 = go.Figure(data=[go.Pie(labels=top_sales_data.index, values=top_sales_data)])
+    # Создание графика
+    fig1 = go.Figure(data=[go.Pie(labels=top_sales_data.index, values=top_sales_data)])
 
-        # Настройка макета и заголовка
-        fig1.update_layout(title='10 самых часто продаваемых продуктов')
+    # Настройка макета и заголовка
+    fig1.update_layout(title='10 самых часто продаваемых продуктов')
 
-        # Отображение графика в Streamlit
-        st.plotly_chart(fig1)
+    # Отображение графика в Streamlit
+    st.plotly_chart(fig1, use_container_width=True)
 
 
 
