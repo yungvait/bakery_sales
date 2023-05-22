@@ -64,15 +64,15 @@ def run_app():
         st.title('Анализ данных')
         st.markdown('---')
         # Показать только первые 10 строк отфильтрованных данных
-        with st.expander("Посмотреть первые 10 строк", use_container_width=True):
+        with st.expander("Посмотреть первые 10 строк"):
             st.subheader('Отфильтрованные данные')
             st.dataframe(filtered_data.head(10), use_container_width=True)
         # Отобразить остальные строки с прокруткой
-        with st.expander("Посмотреть все отфильтрованные строки", use_container_width=True):
+        with st.expander("Посмотреть все отфильтрованные строки"):
             st.dataframe(filtered_data, use_container_width=True)
-        with st.expander('Сводная таблица "Сумма продаж по артикулу"', use_container_width=True):
+        with st.expander('Сводная таблица "Сумма продаж по артикулу"'):
         
-            st.write("pivot_table", use_container_width=True)
+            st.write("pivot_table")
 
             
 
@@ -92,7 +92,7 @@ def run_app():
 
 
         # Показать только первые 10 строк топ-10 продаж
-        st.write("10 самых часто продаваемых продуктов", use_container_width=True)
+        st.write("10 самых часто продаваемых продуктов")
         st.dataframe(top_sales, use_container_width=True)
 
 
