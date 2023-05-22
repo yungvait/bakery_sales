@@ -8,7 +8,7 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 import calendar
 
-with open('C:\\Users\\User\\Desktop\\ВКР\\bakery_sales\\style.css') as f:
+with open('style.css') as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 
