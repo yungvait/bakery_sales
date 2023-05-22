@@ -86,36 +86,33 @@ def run_app():
 
 
 
-    col11, col12, col13 = st.columns(3)
-    with col11:
-        # Показать только первые 10 строк топ-10 продаж
-        st.write("10 самых часто продаваемых продуктов")
-        st.dataframe(top_sales)
+
+    # Показать только первые 10 строк топ-10 продаж
+    st.write("10 самых часто продаваемых продуктов")
+    st.dataframe(top_sales)
 
 
 
-    with col12:
-        colgr1, colgr2 = st.columns(2)
-        # Конвертация столбца 'total_price' в числовой тип данных
-        data['total_price'] = pd.to_numeric(data['total_price'], errors='coerce')
+    colgr1, colgr2 = st.columns(2)
+    # Конвертация столбца 'total_price' в числовой тип данных
+    data['total_price'] = pd.to_numeric(data['total_price'], errors='coerce')
 
-        with colgr1:
-            # Выбор года с помощью виджета
-            selected_year11 = st.selectbox('Выберите год', data['date'].dt.year.unique())
+    with colgr1:
+        # Выбор года с помощью виджета
+        selected_year11 = st.selectbox('Выберите год', data['date'].dt.year.unique())
 
-            # Фильтрация данных по выбранному году
-            filtered_data11 = data[data['date'].dt.year == selected_year11]
+        # Фильтрация данных по выбранному году
+        filtered_data11 = data[data['date'].dt.year == selected_year11]
+        # Группировка данных по месяцу и суммирование выручки
+        revenue_by_month11 = filtered_data11.groupby(filtered_data11['date'].dt.month)['total_price'].sum().reset_index()
 
-            # Группировка данных по месяцу и суммирование выручки
-            revenue_by_month11 = filtered_data11.groupby(filtered_data11['date'].dt.month)['total_price'].sum().reset_index()
+        # Преобразование числовых значений месяцев в названия
+        revenue_by_month11['date'] = revenue_by_month11['date'].apply(lambda x: calendar.month_name[x])
 
-            # Преобразование числовых значений месяцев в названия
-            revenue_by_month11['date'] = revenue_by_month11['date'].apply(lambda x: calendar.month_name[x])
+    with colgr2:
 
-        with colgr2:
-
-            # Выбор типа графика с помощью селектбокса
-            chart_type = st.selectbox('Выберите тип графика', ['Гистограмма', 'Круговая диаграмма'])
+        # Выбор типа графика с помощью селектбокса
+        chart_type = st.selectbox('Выберите тип графика', ['Гистограмма', 'Круговая диаграмма'])
 
         if chart_type == 'Гистограмма':
             # Создание графика выручки по месяцам
@@ -138,79 +135,78 @@ def run_app():
             st.plotly_chart(fig)
 
 
-    with col13:
-        # Показать только первые 10 строк 10 самых часто продаваемых продуктов
-        st.write("Топ-10 продуктов по сумме продаж")
-        st.dataframe(top_products)
+    
+    # Показать только первые 10 строк 10 самых часто продаваемых продуктов
+    st.write("Топ-10 продуктов по сумме продаж")
+    st.dataframe(top_products)
 
 
 
 
-    col1, col2 = st.columns(2)
-    with col1:
-        # Данные для графика "10 самых часто продаваемых продуктов"
-        top_sales_data = top_sales.set_index('article')['Quantity']
+   
+    # Данные для графика "10 самых часто продаваемых продуктов"
+    top_sales_data = top_sales.set_index('article')['Quantity']
 
-        # Создание графика
-        fig1 = go.Figure(data=[go.Pie(labels=top_sales_data.index, values=top_sales_data)])
+    # Создание графика
+    fig1 = go.Figure(data=[go.Pie(labels=top_sales_data.index, values=top_sales_data)])
 
-        # Настройка макета и заголовка
-        fig1.update_layout(title='10 самых часто продаваемых продуктов')
+    # Настройка макета и заголовка
+    fig1.update_layout(title='10 самых часто продаваемых продуктов')
 
-        # Отображение графика в Streamlit
-        st.plotly_chart(fig1)
+    # Отображение графика в Streamlit
+    st.plotly_chart(fig1)
 
 
-        if same_date:
-            # Фильтрация данных по выбранному дню
-            filtered_data_single_day = filtered_data[filtered_data['date'] == start_date]
+    if same_date:
+        # Фильтрация данных по выбранному дню
+        filtered_data_single_day = filtered_data[filtered_data['date'] == start_date]
 
-            if not filtered_data_single_day.empty:
-                # Группировка данных по времени и суммирование продаж
-                sales_by_time = filtered_data_single_day.groupby('time')['Quantity'].sum()
+        if not filtered_data_single_day.empty:
+            # Группировка данных по времени и суммирование продаж
+            sales_by_time = filtered_data_single_day.groupby('time')['Quantity'].sum()
 
-                # Преобразование времени в формат строки для правильного отображения на графике
-                sales_by_time_numeric = pd.DataFrame({'time': sales_by_time.index, 'sales': sales_by_time.values})
-                sales_by_time_numeric['time'] = sales_by_time_numeric['time'].apply(lambda x: x.strftime('%H:%M'))
+            # Преобразование времени в формат строки для правильного отображения на графике
+            sales_by_time_numeric = pd.DataFrame({'time': sales_by_time.index, 'sales': sales_by_time.values})
+            sales_by_time_numeric['time'] = sales_by_time_numeric['time'].apply(lambda x: x.strftime('%H:%M'))
 
-                # Создание графика почасовой динамики продаж с датой и днем недели
-                fig_hourly = go.Figure()
-                fig_hourly.add_trace(go.Scatter(
-                    x=sales_by_time_numeric['time'],
-                    y=sales_by_time_numeric['sales'],
-                    mode='lines',
-                    name=start_date.strftime('%A (%d.%m.%Y)'),
-                    hovertext=[f'{start_date.strftime("%A (%d.%m.%Y)")} {time}' for time in sales_by_time_numeric['time']],
-                    hovertemplate='<b>%{hovertext}</b><br>Продажи: %{y}'
-                ))
-                fig_hourly.update_layout(
-                    title='Почасовая динамика продаж (в пределах одного дня)',
-                    xaxis_title='Время',
-                    yaxis_title='Количество продаж',
-                    xaxis_tickformat='%H:%M'
-                )
-                st.plotly_chart(fig_hourly)
-            else:
-                st.write('Нет данных для выбранного дня.')
-        else:
-            # Группировка данных по дате и суммирование продаж
-            sales_by_date = filtered_data.groupby('date')['Quantity'].sum()
-            # Создание графика динамики продаж с датой и днем недели
-            fig = go.Figure()
-            fig.add_trace(go.Scatter(
-                x=sales_by_date.index,
-                y=sales_by_date.values,
+            # Создание графика почасовой динамики продаж с датой и днем недели
+            fig_hourly = go.Figure()
+            fig_hourly.add_trace(go.Scatter(
+                x=sales_by_time_numeric['time'],
+                y=sales_by_time_numeric['sales'],
                 mode='lines',
-                name='Динамика продаж',
-                hovertext=[f'{date.strftime("%A (%d.%m.%Y)")}' for date in sales_by_date.index],
+                name=start_date.strftime('%A (%d.%m.%Y)'),
+                hovertext=[f'{start_date.strftime("%A (%d.%m.%Y)")} {time}' for time in sales_by_time_numeric['time']],
                 hovertemplate='<b>%{hovertext}</b><br>Продажи: %{y}'
             ))
-            fig.update_layout(
-                title='Динамика продаж',
-                xaxis_title='Дата',
-                yaxis_title='Количество продаж'
+            fig_hourly.update_layout(
+                title='Почасовая динамика продаж (в пределах одного дня)',
+                xaxis_title='Время',
+                yaxis_title='Количество продаж',
+                xaxis_tickformat='%H:%M'
             )
-            st.plotly_chart(fig)
+            st.plotly_chart(fig_hourly)
+        else:
+            st.write('Нет данных для выбранного дня.')
+    else:
+        # Группировка данных по дате и суммирование продаж
+        sales_by_date = filtered_data.groupby('date')['Quantity'].sum()
+        # Создание графика динамики продаж с датой и днем недели
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=sales_by_date.index,
+            y=sales_by_date.values,
+            mode='lines',
+            name='Динамика продаж',
+            hovertext=[f'{date.strftime("%A (%d.%m.%Y)")}' for date in sales_by_date.index],
+            hovertemplate='<b>%{hovertext}</b><br>Продажи: %{y}'
+        ))
+        fig.update_layout(
+            title='Динамика продаж',
+            xaxis_title='Дата',
+            yaxis_title='Количество продаж'
+        )
+        st.plotly_chart(fig)
 
 
 
@@ -229,91 +225,91 @@ def run_app():
 
 
         
-    with col2:
+  
 
-        # Данные для графика "Топ-10 продуктов по сумме продаж"
-        top_products_data = top_products.set_index('article')['total_price']
+    # Данные для графика "Топ-10 продуктов по сумме продаж"
+    top_products_data = top_products.set_index('article')['total_price']
 
-        # Создание круговой диаграммы
-        fig2 = go.Figure(data=[go.Pie(labels=top_products_data.index, values=top_products_data)])
+    # Создание круговой диаграммы
+    fig2 = go.Figure(data=[go.Pie(labels=top_products_data.index, values=top_products_data)])
 
-        # Настройка макета и заголовка
-        fig2.update_layout(title='Топ-10 продуктов по сумме продаж')
+    # Настройка макета и заголовка
+    fig2.update_layout(title='Топ-10 продуктов по сумме продаж')
 
-        # Отображение графика в Streamlit
-        st.plotly_chart(fig2)
+    # Отображение графика в Streamlit
+    st.plotly_chart(fig2)
 
 
 
-        if same_date:
-            # Фильтрация данных по выбранному дню
-            filtered_data_single_day = filtered_data[filtered_data['date'] == start_date]
+    if same_date:
+        # Фильтрация данных по выбранному дню
+        filtered_data_single_day = filtered_data[filtered_data['date'] == start_date]
 
-            if not filtered_data_single_day.empty:
-                # Группировка данных по времени и суммирование продаж
-                sales_by_time = filtered_data_single_day.groupby('time')['total_price'].sum()
+        if not filtered_data_single_day.empty:
+            # Группировка данных по времени и суммирование продаж
+            sales_by_time = filtered_data_single_day.groupby('time')['total_price'].sum()
 
-                # Удаление нулевых значений
-                sales_by_time = sales_by_time[sales_by_time > 0]
+            # Удаление нулевых значений
+            sales_by_time = sales_by_time[sales_by_time > 0]
 
-                if not sales_by_time.empty:
-                    # Преобразование времени в формат строки для правильного отображения на графике
-                    sales_by_time_numeric = pd.DataFrame({'time': sales_by_time.index, 'sales': sales_by_time.values})
-                    sales_by_time_numeric['time'] = sales_by_time_numeric['time'].apply(lambda x: x.strftime('%H:%M'))
+            if not sales_by_time.empty:
+                # Преобразование времени в формат строки для правильного отображения на графике
+                sales_by_time_numeric = pd.DataFrame({'time': sales_by_time.index, 'sales': sales_by_time.values})
+                sales_by_time_numeric['time'] = sales_by_time_numeric['time'].apply(lambda x: x.strftime('%H:%M'))
 
-                    # Создание графика почасовой динамики продаж по сумме продаж с датой и днем недели
-                    fig_hourly_sales = go.Figure()
-                    fig_hourly_sales.add_trace(go.Scatter(
-                        x=sales_by_time_numeric['time'],
-                        y=sales_by_time_numeric['sales'],
-                        mode='lines',
-                        name=start_date.strftime('%A (%d.%m.%Y)'),
-                        hovertext=[f'{start_date.strftime("%A (%d.%m.%Y)")} {time}' for time in sales_by_time_numeric['time']],
-                        hovertemplate='<b>%{hovertext}</b><br>Сумма продаж: %{y}'
-                    ))
-                    fig_hourly_sales.update_layout(
-                        title='Почасовая динамика продаж по сумме продаж (в пределах одного дня)',
-                        xaxis_title='Время',
-                        yaxis_title='Сумма продаж',
-                        xaxis_tickformat='%H:%M'
-                    )
-                    st.plotly_chart(fig_hourly_sales)
-                else:
-                    st.write('Нет данных для выбранного дня.')
+                # Создание графика почасовой динамики продаж по сумме продаж с датой и днем недели
+                fig_hourly_sales = go.Figure()
+                fig_hourly_sales.add_trace(go.Scatter(
+                    x=sales_by_time_numeric['time'],
+                    y=sales_by_time_numeric['sales'],
+                    mode='lines',
+                    name=start_date.strftime('%A (%d.%m.%Y)'),
+                    hovertext=[f'{start_date.strftime("%A (%d.%m.%Y)")} {time}' for time in sales_by_time_numeric['time']],
+                    hovertemplate='<b>%{hovertext}</b><br>Сумма продаж: %{y}'
+                ))
+                fig_hourly_sales.update_layout(
+                    title='Почасовая динамика продаж по сумме продаж (в пределах одного дня)',
+                    xaxis_title='Время',
+                    yaxis_title='Сумма продаж',
+                    xaxis_tickformat='%H:%M'
+                )
+                st.plotly_chart(fig_hourly_sales)
             else:
                 st.write('Нет данных для выбранного дня.')
         else:
-            # Фильтрация данных по выбранному временному диапазону
-            filtered_data_range = filtered_data[(filtered_data['date'] >= start_date) & (filtered_data['date'] <= end_date)]
+            st.write('Нет данных для выбранного дня.')
+    else:
+        # Фильтрация данных по выбранному временному диапазону
+        filtered_data_range = filtered_data[(filtered_data['date'] >= start_date) & (filtered_data['date'] <= end_date)]
 
-            if not filtered_data_range.empty:
-                # Группировка данных по дате и суммирование продаж
-                sales_by_date = filtered_data_range.groupby('date')['total_price'].sum()
+        if not filtered_data_range.empty:
+            # Группировка данных по дате и суммирование продаж
+            sales_by_date = filtered_data_range.groupby('date')['total_price'].sum()
 
-                # Удаление нулевых значений
-                sales_by_date = sales_by_date[sales_by_date > 0]
+            # Удаление нулевых значений
+            sales_by_date = sales_by_date[sales_by_date > 0]
 
-                if not sales_by_date.empty:
-                    # Создание графика динамики продаж по сумме продаж с датой и днем недели
-                    fig_sales = go.Figure()
-                    fig_sales.add_trace(go.Scatter(
-                        x=[date.strftime('%d.%m.%Y') for date in sales_by_date.index],
-                        y=sales_by_date.values,
-                        mode='lines',
-                        name='Динамика продаж по сумме',
-                        hovertext=[date.strftime("%A (%d.%m.%Y)") for date in sales_by_date.index],
-                        hovertemplate='<b>%{hovertext}</b><br>Сумма продаж: %{y:.2f}'
-                    ))
-                    fig_sales.update_layout(
-                        title='Динамика продаж по сумме',
-                        xaxis_title='Дата',
-                        yaxis_title='Сумма продаж'
-                    )
-                    st.plotly_chart(fig_sales)
-                else:
-                    st.write('Нет данных для отображения динамики продаж по сумме.')
+            if not sales_by_date.empty:
+                # Создание графика динамики продаж по сумме продаж с датой и днем недели
+                fig_sales = go.Figure()
+                fig_sales.add_trace(go.Scatter(
+                    x=[date.strftime('%d.%m.%Y') for date in sales_by_date.index],
+                    y=sales_by_date.values,
+                    mode='lines',
+                    name='Динамика продаж по сумме',
+                    hovertext=[date.strftime("%A (%d.%m.%Y)") for date in sales_by_date.index],
+                    hovertemplate='<b>%{hovertext}</b><br>Сумма продаж: %{y:.2f}'
+                ))
+                fig_sales.update_layout(
+                    title='Динамика продаж по сумме',
+                    xaxis_title='Дата',
+                    yaxis_title='Сумма продаж'
+                )
+                st.plotly_chart(fig_sales)
             else:
-                st.write('Нет данных для выбранного временного диапазона.')
+                st.write('Нет данных для отображения динамики продаж по сумме.')
+        else:
+            st.write('Нет данных для выбранного временного диапазона.')
                                         
 
            
