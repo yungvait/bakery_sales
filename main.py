@@ -8,7 +8,7 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 import calendar
 import time
-from statsmodels.tsa.statespace.sarimax import SARIMAX
+
 
 with open('bootstrap.css') as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
@@ -41,32 +41,7 @@ def run_app():
         min_date = data['date'].min().date()
         max_date = data['date'].max().date()
 
-
-
-
-
-
-        # Создание SARIMAX-модели
-        model = SARIMAX(data['Quantity'], order=(3, 0, 2), seasonal_order=(0, 1, 0, 52))
-        model_fit = model.fit()
-
-        # Генерация прогноза
-        prediction = pd.DataFrame(model_fit.predict(start=len(data), end=(len(data) + 11))).set_index(data.index)
-
-        # Отображение данных и прогноза в Streamlit приложении
-        st.title('Прогноз продаж')
-        st.write('Исходные данные:')
-        st.write(data)
-
-        st.write('Прогноз:')
-        st.line_chart(prediction)
-
-
-
-
-
-
-
+        
         # Боковая панель с фильтрами
         st.sidebar.subheader('Фильтры')
 
