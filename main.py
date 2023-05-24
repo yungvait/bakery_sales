@@ -1,20 +1,21 @@
 import pandas as pd
 import streamlit as st
 import datetime
-import matplotlib.pyplot as plt
-import numpy as np
 import plotly.graph_objects as go
-import plotly.express as px
 from plotly.subplots import make_subplots
 import calendar
 import time
+
 
 
 with open('bootstrap.css') as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 
+
+
 def run_app():
+    
     # Загрузка данных с указанием кодировки
     data = None
     container = st.empty()  # Создание пустого контейнера для отображения содержимого
@@ -89,8 +90,8 @@ def run_app():
             # Отобразить остальные строки с прокруткой
             with st.expander("Посмотреть все отфильтрованные строки"):
                 st.dataframe(filtered_data, use_container_width=True)
-            with st.expander('Сводная таблица "Сумма продаж по артикулу"'):
-                st.write("pivot_table")
+
+
 
             # Топ-10 продаж за выбранный период
             top_sales = filtered_data.groupby('article')['Quantity'].sum().nlargest(10).reset_index()
