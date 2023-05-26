@@ -24,7 +24,7 @@ def convert_df(df):
 
 
 def run_app():
-    st.set_theme('dark')
+
     # Загрузка данных с указанием кодировки
     data = None
     container = st.empty()  # Создание пустого контейнера для отображения содержимого
