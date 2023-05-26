@@ -5,11 +5,20 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import calendar
 import time
-
+import io
 
 
 with open('bootstrap.css') as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+@st.cache_data
+def convert_df(df):
+    output = io.BytesIO()
+    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+    df.to_excel(writer, index=False, sheet_name='Sheet1')
+    writer.close()
+    output.seek(0)
+    return output.getvalue()
 
 
 
@@ -87,9 +96,11 @@ def run_app():
             with st.expander("Посмотреть первые 10 строк"):
                 st.subheader('Отфильтрованные данные')
                 st.dataframe(filtered_data.head(10), use_container_width=True)
+            st.markdown('---')
             # Отобразить остальные строки с прокруткой
             with st.expander("Посмотреть все отфильтрованные строки"):
                 st.dataframe(filtered_data, use_container_width=True)
+            st.markdown('---')
 
 
 
@@ -106,11 +117,20 @@ def run_app():
 
 
 
-
+            
 
             # Показать только первые 10 строк топ-10 продаж
             st.write("10 самых часто продаваемых продуктов")
             st.dataframe(top_sales, use_container_width=True)
+            
+            top_salesexc = convert_df(top_sales)
+            st.download_button(
+                label="Скачать в фомате .xlsx",
+                data=top_salesexc,
+                file_name='top_sales.xlsx',
+                mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            )
+            st.markdown('---')
 
 
             # Данные для графика "10 самых часто продаваемых продуктов"
@@ -121,17 +141,25 @@ def run_app():
 
             # Настройка макета и заголовка
             fig1.update_layout(title='10 самых часто продаваемых продуктов')
+            
 
             # Отображение графика в Streamlit
             st.plotly_chart(fig1, use_container_width=True)
 
-            
+            st.markdown('---')
             # Показать только первые 10 строк 10 самых часто продаваемых продуктов
             st.write("Топ-10 продуктов по сумме продаж")
             st.dataframe(top_products, use_container_width=True)
 
 
-
+            top_sales_dataexc = convert_df(top_sales_data)
+            st.download_button(
+                label="Скачать в фомате .xlsx",
+                data=top_sales_dataexc,
+                file_name='top_sales_data.xlsx',
+                mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            )
+            st.markdown('---')
 
 
             # Данные для графика "Топ-10 продуктов по сумме продаж"
@@ -139,12 +167,14 @@ def run_app():
 
             # Создание круговой диаграммы
             fig2 = go.Figure(data=[go.Pie(labels=top_products_data.index, values=top_products_data)])
+            
 
             # Настройка макета и заголовка
             fig2.update_layout(title='Топ-10 продуктов по сумме продаж')
 
             # Отображение графика в Streamlit
             st.plotly_chart(fig2, use_container_width=True)
+            st.markdown('---')
 
 
 
@@ -189,7 +219,7 @@ def run_app():
                 )
                 fig.update_layout()
                 st.plotly_chart(fig, use_container_width=True)
-
+        st.markdown('---')
 
         
 
@@ -251,7 +281,7 @@ def run_app():
                 yaxis_title='Количество продаж'
             )
             st.plotly_chart(fig, use_container_width=True)
-
+        st.markdown('---')
 
 
 
@@ -344,7 +374,7 @@ def run_app():
                     st.write('Нет данных для отображения динамики продаж по сумме.')
             else:
                 st.write('Нет данных для выбранного временного диапазона.')
-                                            
+        st.markdown('---')                             
 
             
 
