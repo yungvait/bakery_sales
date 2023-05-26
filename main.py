@@ -20,7 +20,7 @@ def convert_df(df):
     output.seek(0)
     return output.getvalue()
 
-
+st.set_theme('dark')
 
 
 def run_app():
