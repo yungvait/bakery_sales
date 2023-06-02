@@ -42,38 +42,27 @@ def run_app():
 
 
     if data is not None:
-
-        
         # Преобразование столбца 'date' в тип datetime
         data['date'] = pd.to_datetime(data['date'], format='%d.%m.%Y')
-
         # Определение минимальной и максимальной даты
         min_date = data['date'].min().date()
         max_date = data['date'].max().date()
-
-        
         # Боковая панель с фильтрами
         st.sidebar.subheader('Фильтры')
-
         # Фильтр диапазона дат
         start_date = st.sidebar.date_input('Выберите начальную дату', value=min_date, min_value=min_date, max_value=max_date)
         end_date = st.sidebar.date_input('Выберите конечную дату', value=max_date, min_value=min_date, max_value=max_date)
-
         # Преобразование столбца 'time' в тип datetime
         data['time'] = pd.to_datetime(data['time'], format='%H:%M')
-
         # Проверка, совпадают ли начальная и конечная даты
         same_date = start_date == end_date
-
         if same_date:
             # Фильтр диапазона времени только при совпадающих датах
             start_time = st.sidebar.time_input('Выберите начальное время', value=datetime.time(0, 0))
             end_time = st.sidebar.time_input('Выберите конечное время', value=datetime.time(23, 59))
-
             # Преобразование времени в формат строки
             start_time_str = start_time.strftime('%H:%M')
             end_time_str = end_time.strftime('%H:%M')
-
             # Фильтрация данных по дате и времени
             filtered_data = data[(data['date'] == pd.to_datetime(start_date)) &
                                  (data['time'].dt.strftime('%H:%M') >= start_time_str) &
@@ -92,12 +81,12 @@ def run_app():
             st.markdown('---')
             st.title('Анализ данных')
             st.markdown('---')
-            # Показать только первые 10 строк отфильтрованных данных
+            # Первые 10 строк отфильтрованных данных
             with st.expander("Посмотреть первые 10 строк"):
                 st.subheader('Отфильтрованные данные')
                 st.dataframe(filtered_data.head(10), use_container_width=True)
             st.markdown('---')
-            # Отобразить остальные строки с прокруткой
+            # Все строки 
             with st.expander("Посмотреть все отфильтрованные строки"):
                 st.dataframe(filtered_data, use_container_width=True)
             st.markdown('---')
@@ -185,20 +174,15 @@ def run_app():
         with colgr1:
             # Выбор года с помощью виджета
             selected_year11 = st.selectbox('Выберите год', data['date'].dt.year.unique())
-
             # Фильтрация данных по выбранному году
             filtered_data11 = data[data['date'].dt.year == selected_year11]
             # Группировка данных по месяцу и суммирование выручки
             revenue_by_month11 = filtered_data11.groupby(filtered_data11['date'].dt.month)['total_price'].sum().reset_index()
-
             # Преобразование числовых значений месяцев в названия
             revenue_by_month11['date'] = revenue_by_month11['date'].apply(lambda x: calendar.month_name[x])
-
         with colgr2:
-
             # Выбор типа графика с помощью селектбокса
             chart_type = st.selectbox('Выберите тип графика', ['Гистограмма', 'Круговая диаграмма'])
-
         with st.container():
             if chart_type == 'Гистограмма':
                 # Создание графика выручки по месяцам
@@ -210,7 +194,6 @@ def run_app():
                 )
                 fig.update_layout()
                 st.plotly_chart(fig, use_container_width=True)
-
             elif chart_type == 'Круговая диаграмма':
                 # Создание круговой диаграммы выручки по месяцам
                 fig = go.Figure(data=[go.Pie(labels=revenue_by_month11['date'], values=revenue_by_month11['total_price'])])
@@ -288,20 +271,6 @@ def run_app():
 
 
 
-
-
-
-
-
-
-
-
-
-
-            
-    
-
-    
 
 
 
@@ -388,28 +357,6 @@ def run_app():
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     
         # Определение минимальной и максимальной даты
         min_date_chart = data['date'].min().date()
@@ -479,21 +426,7 @@ def run_app():
 
                     st.plotly_chart(fig_sales_by_product, use_container_width=True)
     
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  
 
 if __name__ == '__main__':
     # Запуск приложения
