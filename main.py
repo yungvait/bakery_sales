@@ -10,6 +10,13 @@ import io
 
 with open('style.css') as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+"""
+<style>
+.styles_terminalButton__3xUnY(
+visbility: hidden;
+)
+</style>
+"""
 
 @st.cache_data
 def convert_df(df):
