@@ -130,7 +130,11 @@ def run_app():
             top_sales = filtered_data.groupby('article')['Quantity'].sum().nlargest(10).reset_index()
 
             # Преобразование столбца 'total_price' в числовой тип данных
-            filtered_data['total_price'] = filtered_data['total_price'].str.replace(',', '.').astype(float)
+            filtered_data['total_price'] = filtered_data['total_price'].str.replace(',', '.', regex=True)
+            filtered_data['total_price'] = pd.to_numeric(filtered_data['total_price'], errors='coerce')
+
+            # Удаление строк с некорректными значениями
+            filtered_data = filtered_data.dropna(subset=['total_price'])
 
             # Топ-10 продуктов по сумме продаж за выбранный период
             top_products = filtered_data.groupby('article')['total_price'].sum().nlargest(10).reset_index()
