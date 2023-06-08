@@ -519,6 +519,8 @@ def run_app():
 
                 # Создание сводной таблицы по часу дня
                 sales_by_hour = filtered_data.groupby('hour')['total_price'].sum()
+                # Установка русских названий колонок в датафрейме sales_by_hour
+                sales_by_hour = sales_by_hour.rename(columns={'hour': 'Час', 'total_price': 'Сумма продаж'})
 
                 # Отображение сводной таблицы по часу дня
                 st.subheader('Продажи по часу дня')
@@ -533,6 +535,9 @@ def run_app():
 
                 # Создание сводной таблицы по дню недели
                 sales_by_day_of_week = filtered_data.groupby('day_of_week')['total_price'].sum()
+                # Установка русских названий колонок в датафрейме sales_by_day_of_week
+                sales_by_day_of_week = sales_by_day_of_week.rename(columns={'day_of_week': 'День недели', 'total_price': 'Сумма продаж'})
+
 
                 # Отображение сводной таблицы по дню недели
                 st.subheader('Продажи по дню недели')
