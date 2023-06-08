@@ -538,7 +538,6 @@ def run_app():
                 # Установка русских названий колонок в датафрейме sales_by_day_of_week
                 sales_by_day_of_week = sales_by_day_of_week.rename(columns={'day_of_week': 'День недели', 'total_price': 'Сумма продаж'})
 
-
                 # Отображение сводной таблицы по дню недели
                 st.subheader('Продажи по дню недели')
                 st.write(sales_by_day_of_week)
