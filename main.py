@@ -518,8 +518,9 @@ def run_app():
                 filtered_data['hour'] = filtered_data['time'].apply(lambda x: x.hour)
 
                 # Создание сводной таблицы по часу дня
-                sales_by_hour = filtered_data.groupby('hour')['total_price'].sum()
-                # Установка русских названий колонок в датафрейме sales_by_hour
+                sales_by_hour = filtered_data.groupby('hour')['total_price'].sum().reset_index()
+
+                # Переименование колонок на русском языке
                 sales_by_hour = sales_by_hour.rename(columns={'hour': 'Час', 'total_price': 'Сумма продаж'})
 
                 # Отображение сводной таблицы по часу дня
@@ -534,8 +535,9 @@ def run_app():
                 filtered_data['day_of_week'] = filtered_data['date'].dt.day_name()
 
                 # Создание сводной таблицы по дню недели
-                sales_by_day_of_week = filtered_data.groupby('day_of_week')['total_price'].sum()
-                # Установка русских названий колонок в датафрейме sales_by_day_of_week
+                sales_by_day_of_week = filtered_data.groupby('day_of_week')['total_price'].sum().reset_index()
+
+                # Переименование колонок на русском языке
                 sales_by_day_of_week = sales_by_day_of_week.rename(columns={'day_of_week': 'День недели', 'total_price': 'Сумма продаж'})
 
                 # Отображение сводной таблицы по дню недели
