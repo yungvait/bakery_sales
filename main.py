@@ -125,12 +125,21 @@ def run_app():
             st.markdown('---')
 
 
+
             # Топ-10 продаж за выбранный период
             top_sales = filtered_data.groupby('article')['Quantity'].sum().nlargest(10).reset_index()
+
             # Преобразование столбца 'total_price' в числовой тип данных
-            filtered_data['total_price'] = filtered_data['total_price'].astype(float)
+            filtered_data['total_price'] = filtered_data['total_price'].str.replace(',', '.').astype(float)
+
             # Топ-10 продуктов по сумме продаж за выбранный период
             top_products = filtered_data.groupby('article')['total_price'].sum().nlargest(10).reset_index()
+
+
+
+
+
+            
 
             # Показать только первые 10 строк топ-10 продаж
             st.write("10 самых часто продаваемых продуктов")
@@ -145,13 +154,17 @@ def run_app():
             )
             st.markdown('---')
 
+
             # Данные для графика "10 самых часто продаваемых продуктов"
             top_sales_data = top_sales.set_index('article')['Quantity']
+
             # Создание графика
             fig1 = go.Figure(data=[go.Pie(labels=top_sales_data.index, values=top_sales_data)])
+
             # Настройка макета и заголовка
             fig1.update_layout(title='10 самых часто продаваемых продуктов')
             
+
             # Отображение графика в Streamlit
             st.plotly_chart(fig1, use_container_width=True)
 
@@ -159,6 +172,7 @@ def run_app():
             # Показать только первые 10 строк 10 самых часто продаваемых продуктов
             st.write("Топ-10 продуктов по сумме продаж")
             st.dataframe(top_products, use_container_width=True)
+
 
             top_sales_dataexc = convert_df(top_sales_data)
             st.download_button(
@@ -172,17 +186,24 @@ def run_app():
 
             # Данные для графика "Топ-10 продуктов по сумме продаж"
             top_products_data = top_products.set_index('article')['total_price']
+
             # Создание круговой диаграммы
             fig2 = go.Figure(data=[go.Pie(labels=top_products_data.index, values=top_products_data)])
+            
+
             # Настройка макета и заголовка
             fig2.update_layout(title='Топ-10 продуктов по сумме продаж')
+
             # Отображение графика в Streamlit
             st.plotly_chart(fig2, use_container_width=True)
             st.markdown('---')
 
+
+
         colgr1, colgr2 = st.columns(2)
         # Конвертация столбца 'total_price' в числовой тип данных
         data['total_price'] = pd.to_numeric(data['total_price'], errors='coerce')
+
         with colgr1:
             # Выбор года с помощью виджета
             selected_year11 = st.selectbox('Выберите год', data['date'].dt.year.unique())
@@ -217,6 +238,15 @@ def run_app():
         st.markdown('---')
 
         
+
+
+
+
+
+    
+
+
+
         if same_date:
             # Фильтрация данных по выбранному дню
             filtered_data_single_day = filtered_data[filtered_data['date'] == start_date]
@@ -268,6 +298,13 @@ def run_app():
             )
             st.plotly_chart(fig, use_container_width=True)
         st.markdown('---')
+
+
+
+
+
+
+
 
 
         if same_date:
@@ -342,9 +379,25 @@ def run_app():
         st.markdown('---')                             
 
             
+
+
+
+
+
+
+
+
+
+
+
+    
         # Определение минимальной и максимальной даты
         min_date_chart = data['date'].min().date()
-        max_date_chart = data['date'].max().date() 
+        max_date_chart = data['date'].max().date()
+
+        
+
+    
         with st.container():
             col3, col4 = st.columns(2)
             with col3:
@@ -357,11 +410,14 @@ def run_app():
 
             # Фильтрация данных только по дате
             filtered_data_chart = data[(data['date'] >= pd.to_datetime(start_date_chart)) & (data['date'] <= pd.to_datetime(end_date_chart))]
+
             # Удаление времени из столбца 'date'
             filtered_data_chart['date'] = filtered_data_chart['date'].dt.date
+
             # Удаление даты из столбца 'time'
             filtered_data_chart['time'] = filtered_data_chart['time'].dt.time
-  
+
+            
             # Фильтр продуктов
             selected_products_chart = st.multiselect('Выберите продукты', filtered_data_chart['article'].unique())
 
@@ -371,6 +427,7 @@ def run_app():
                     (filtered_data_chart['article'].isin(selected_products_chart)) &
                     (filtered_data_chart['date'] >= start_date_chart) & (filtered_data_chart['date'] <= end_date_chart)
                 ]
+
                 if not filtered_data_selected_products.empty:
                     # Группировка данных по продукту, дате и суммирование продаж
                     sales_by_product_date = filtered_data_selected_products.groupby(['article', 'date'])['Quantity'].sum().reset_index()
@@ -396,6 +453,7 @@ def run_app():
                         yaxis_title='Количество продаж',
                         legend=dict(orientation='h', yanchor='top', xanchor='left', x=0, y=1.2)
                     )
+
                     # Установка размера графика
                     fig_sales_by_product.update_layout(height=400, width=600)  #height=600, width=1000
 
@@ -405,7 +463,8 @@ def run_app():
             col10, col20 = st.columns(2)
             with col10:
                 
-                # Визуализация распределения цен                       
+                # Визуализация распределения цен
+                       
                 price_data = pd.to_numeric(data['unit_price'].str.replace(',', '.'))
                 description = price_data.describe()
                 # Настройка русского языка для описания
@@ -440,21 +499,27 @@ def run_app():
             fig = to_russian(fig)
             st.plotly_chart(fig)
 
+
             col11, col21 = st.columns(2)
             with col11:
                 # Преобразование столбца 'total_price' в строковый тип
                 filtered_data['total_price'] = filtered_data['total_price'].astype(str)
+
                 # Замена запятой на точку в столбце 'total_price' только для строковых значений
                 filtered_data['total_price'] = filtered_data['total_price'].where(
                     filtered_data['total_price'].apply(lambda x: isinstance(x, str)),
                     filtered_data['total_price'].str.replace(',', '.')
                 )
+
                 # Преобразование столбца 'total_price' обратно в тип float
                 filtered_data['total_price'] = filtered_data['total_price'].astype(float)
+
                 # Извлечение часа из столбца 'time' в отдельный столбец 'hour'
                 filtered_data['hour'] = filtered_data['time'].apply(lambda x: x.hour)
+
                 # Создание сводной таблицы по часу дня
                 sales_by_hour = filtered_data.groupby('hour')['total_price'].sum()
+
                 # Отображение сводной таблицы по часу дня
                 st.subheader('Продажи по часу дня')
                 st.write(sales_by_hour)
@@ -462,10 +527,13 @@ def run_app():
             with col21:
                 # Преобразование столбца 'date' в тип datetime
                 filtered_data['date'] = pd.to_datetime(filtered_data['date'])
+
                 # Создание нового столбца для дня недели
                 filtered_data['day_of_week'] = filtered_data['date'].dt.day_name()
+
                 # Создание сводной таблицы по дню недели
                 sales_by_day_of_week = filtered_data.groupby('day_of_week')['total_price'].sum()
+
                 # Отображение сводной таблицы по дню недели
                 st.subheader('Продажи по дню недели')
                 st.write(sales_by_day_of_week)
